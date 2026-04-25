@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduNetwork - Jaringan Komputer & Internet XI</title>
+    <style>
+        :root {
+            --navy: #1a237e;
+            --blue: #0277bd;
+            --light-blue: #e1f5fe;
+            --white: #ffffff;
+            --gray: #f5f5f5;
+            --success: #2e7d32;
+            --error: #c62828;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--gray);
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* STICKY HEADER & NAV */
+        header {
+            background: var(--navy);
+            color: white;
+            padding: 1rem 5%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .logo { font-weight: bold; font-size: 1.5rem; }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: var(--transition);
+        }
+
+        nav a:hover, nav a.active {
+            background: var(--blue);
+        }
+
+        .top-controls { display: flex; gap: 10px; align-items: center; }
+
+        /* SECTIONS */
+        section {
+            display: none;
+            padding: 40px 5%;
+            animation: fadeIn 0.5s ease;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* CARD STYLE */
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+        }
+
+        /* BUTTONS */
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+
+        .btn-primary { background: var(--blue); color: white; }
+        .btn-primary:hover { background: var(--navy); transform: scale(1.05); }
+
+        /* DASHBOARD / PROGRESS */
+        .progress-container {
+            background: #ddd;
+            border-radius: 10px;
+            height: 20px;
+            width: 100%;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, var(--blue), #4fc3f7);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #ffd700;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* MATERI STYLES */
+        .sub-materi-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .flashcard {
+            perspective: 1000px;
+            width: 100%;
+            height: 200px;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .flashcard-front { background: var(--light-blue); color: var(--navy); border: 2px solid var(--blue); }
+        .flashcard-back { background: var(--navy); color: white; transform: rotateY(180deg); }
+
+        /* LATIHAN STYLES */
+        .drop-zone {
+            min-height: 60px;
+            border: 2px dashed var(--blue);
+            margin: 10px 0;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            border-radius: 10px;
+            background: #fafafa;
+        }
+
+        .drag-item {
+            background: var(--blue);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: grab;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            header { flex-direction: column; padding: 10px; }
+            nav ul { gap: 5px; margin-top: 10px; font-size: 0.8rem; flex-wrap: wrap; justify-content: center; }
+            .hero { text-align: center; }
+            .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">EduNetwork XI</div>
+        <nav>
+            <ul id="main-nav">
+                <li><a href="#" class="active" onclick="showSection('beranda')">Beranda</a></li>
+                <li><a href="#" onclick="showSection('materi')">Materi</a></li>
+                <li><a href="#" onclick="showSection('latihan')">Latihan</a></li>
+                <li><a href="#" onclick="showSection('refleksi')">Refleksi</a></li>
+                <li><a href="#" onclick="showSection('pengembang')">Pengembang</a></li>
+            </ul>
+        </nav>
+        <div class="top-controls">
+            <button onclick="toggleAudio()" class="btn" style="padding: 8px; background: none; border: 1px solid white; color: white;">
+                <span id="audio-icon">🎵</span>
+            </button>
+            <button onclick="toggleFullScreen()" class="btn" style="padding: 8px; background: none; border: 1px solid white; color: white;">
+                🔲
+            </button>
+        </div>
+    </header>
+
+    <section id="beranda" class="active">
+        <div class="card" style="background: linear-gradient(135deg, var(--navy), var(--blue)); color: white;">
+            <h1>Selamat Datang di Modul Jaringan!</h1>
+            <p>Eksplorasi dunia internet dan konektivitas global secara interaktif.</p>
+            <br>
+            <button class="btn btn-primary" style="background: white; color: var(--navy);" onclick="showSection('materi')">Mulai Belajar</button>
+        </div>
+
+        <div class="card">
+            <h3>Dashboard Kemajuan</h3>
+            <p>Progress Belajar: <span id="progress-text">0%</span></p>
+            <div class="progress-container">
+                <div id="main-progress-bar" class="progress-bar"></div>
+            </div>
+            <div id="badge-container">
+                <span class="badge">Pemula Jaringan</span>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div class="card" style="flex: 1; min-width: 250px;">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMjc3YmQiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCI+PC9jaXJjbGU+PGxpbmUgeDE9IjIiIHkxPSIxMiIgeDI9IjIyIiB5Mj0iMTIiPjwvbGluZT48cGF0aCBkPSJNMTIgMmE0IDQgMCAwIDAgMCAyMCI+PC9wYXRoPjxwYXRoIGQ9Ik0xMiAyYTQgNCAwIDAgMSAwIDIwIj48L3BhdGg+PC9zdmc+" alt="Internet">
+                <h4>Topologi Jaringan</h4>
+                <p>Melihat bagaimana komputer terhubung.</p>
+            </div>
+            <div class="card" style="flex: 1; min-width: 250px;">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMjc3YmQiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iMjAiIGhlaWdodD0iOCIgcng9IjIiPjwvcmVjdD48cmVjdCB4PSIyIiB5PSIxNCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjgiIHJ4PSIyIj48L3JlY3Q+PGxpbmUgeDE9IjYiIHkxPSI2IiB4Mj0iNiIgeTI9IjYiPjwvbGluZT48bGluZSB4MT0iNiIgeTE9IjE4IiB4Mj0iNiIgeTI9IjE4Ij48L2xpbmU+PC9zdmc+" alt="Hardware">
+                <h4>Perangkat Keras</h4>
+                <p>Mengenal Router, Switch, dan Modem.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="materi">
+        <div class="sub-materi-nav">
+            <button class="btn btn-primary" onclick="loadSubMateri(1)">1. Definisi</button>
+            <button class="btn btn-primary" onclick="loadSubMateri(2)">2. Komponen</button>
+            <button class="btn btn-primary" onclick="loadSubMateri(3)">3. Jenis</button>
+            <button class="btn btn-primary" onclick="loadSubMateri(4)">4. Protokol</button>
+            <button class="btn btn-primary" onclick="loadSubMateri(5)">5. Keamanan</button>
+        </div>
+
+        <div id="materi-content" class="card">
+            </div>
+
+        <div class="card">
+            <h3>Mode Eksplorasi: Visualisasi Paket Data</h3>
+            <p>Klik tombol untuk mengirim data melalui router!</p>
+            <div style="background: #eee; height: 150px; position: relative; border-radius: 10px; overflow: hidden;">
+                <div id="data-packet" style="width: 20px; height: 20px; background: red; position: absolute; top: 65px; left: 0; border-radius: 50%; display: none;"></div>
+                <div style="position: absolute; left: 10px; top: 50px;">💻 PC A</div>
+                <div style="position: absolute; right: 10px; top: 50px;">💻 PC B</div>
+                <div style="position: absolute; left: 50%; top: 40px; transform: translateX(-50%);">🌐 ROUTER</div>
+            </div>
+            <br>
+            <button class="btn btn-primary" onclick="simulatePacket()">Kirim Data</button>
+        </div>
+    </section>
+
+    <section id="latihan">
+        <div id="quiz-container">
+            <div class="card">
+                <h2>Latihan 1: Benar atau Salah</h2>
+                <p id="q1-text">Internet Protocol (IP) bertanggung jawab untuk mengirimkan paket data ke alamat yang benar.</p>
+                <button class="btn" onclick="checkAnswer(true, 'q1')">Benar</button>
+                <button class="btn" onclick="checkAnswer(false, 'q1')">Salah</button>
+            </div>
+
+            <div class="card">
+                <h2>Latihan 2: Drag and Drop Komponen</h2>
+                <p>Tarik nama perangkat ke kotak yang tersedia:</p>
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <div class="drag-item" draggable="true" ondragstart="drag(event)" id="drag1">Router</div>
+                    <div class="drag-item" draggable="true" ondragstart="drag(event)" id="drag2">Kabel UTP</div>
+                </div>
+                <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <span>Letakkan Perangkat Jaringan di sini: </span>
+                </div>
+            </div>
+        </div>
+        <div id="quiz-result" class="card" style="display: none; text-align: center;">
+            <h2>Luar Biasa! 🎉</h2>
+            <p>Kamu telah menyelesaikan semua tantangan.</p>
+            <button class="btn btn-primary" onclick="location.reload()">Ulangi Latihan</button>
+        </div>
+    </section>
+
+    <section id="refleksi">
+        <div class="card">
+            <h2>Refleksi Belajar</h2>
+            <p>Apa yang kamu pelajari hari ini?</p>
+            <textarea style="width: 100%; height: 100px; padding: 10px; margin: 10px 0; border-radius: 10px;"></textarea>
+            
+            <p>Bagaimana perasaanmu?</p>
+            <div style="display: flex; gap: 20px; font-size: 2rem; cursor: pointer;">
+                <span onclick="setRefleksi('😊')">😊</span>
+                <span onclick="setRefleksi('😐')">😐</span>
+                <span onclick="setRefleksi('🤔')">🤔</span>
+            </div>
+            <br>
+            <button class="btn btn-primary" onclick="saveRefleksi()">Simpan Refleksi</button>
+        </div>
+    </section>
+
+    <section id="pengembang">
+        <div class="card" style="text-align: center;">
+            <div style="width: 120px; height: 120px; background: #ccc; border-radius: 50%; margin: 0 auto 20px;"></div>
+            <h2>RINO KARNO</h2>
+            <p>Guru Informatika</p>
+            <p>SMAN 1 BANUHAMPU</p>
+            <hr style="margin: 20px 0;">
+            <p>&copy; 2024 Media Pembelajaran Interaktif</p>
+        </div>
+    </section>
+
+    <audio id="bgm" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // STATE MANAGEMENT
+        let state = {
+            progress: parseInt(localStorage.getItem('eduProgress')) || 0,
+            isMuted: true,
+            currentMateri: 1
+        };
+
+        // NAVIGATION
+        function showSection(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            
+            document.querySelectorAll('#main-nav a').forEach(a => {
+                a.classList.remove('active');
+                if(a.innerText.toLowerCase() === id) a.classList.add('active');
+            });
+
+            if(id === 'materi') loadSubMateri(state.currentMateri);
+            playSfx('click');
+        }
+
+        // MATERI ENGINE
+        const materiData = {
+            1: {
+                title: "Apa itu Jaringan Komputer?",
+                text: "Jaringan komputer adalah sekumpulan perangkat komputer yang saling terhubung untuk berbagi sumber daya dan informasi.",
+                fact: "Internet adalah jaringan komputer terbesar di dunia!"
+            },
+            2: {
+                title: "Perangkat Keras Jaringan",
+                text: "Untuk terhubung, kita butuh: 1. Router (pembagi akses), 2. Switch (penghubung lokal), 3. Modem (akses internet).",
+                fact: "Router menentukan jalan tercepat untuk data kamu."
+            }
+            // Tambahkan sub-materi lainnya sesuai kebutuhan
+        };
+
+        function loadSubMateri(id) {
+            state.currentMateri = id;
+            const content = document.getElementById('materi-content');
+            const data = materiData[id] || materiData[1];
+            
+            content.innerHTML = `
+                <h2>${data.title}</h2>
+                <p>${data.text}</p>
+                <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">Klik untuk melihat Fakta Seru!</div>
+                        <div class="flashcard-back">${data.fact}</div>
+                    </div>
+                </div>
+                <button class="btn" onclick="speakText('${data.text}')">🔊 Dengarkan Penjelasan</button>
+            `;
+            updateProgress(id * 10);
+        }
+
+        // SIMULASI
+        function simulatePacket() {
+            const packet = document.getElementById('data-packet');
+            packet.style.display = 'block';
+            packet.style.left = '0';
+            
+            let pos = 0;
+            const interval = setInterval(() => {
+                if (pos >= 95) {
+                    clearInterval(interval);
+                    packet.style.display = 'none';
+                    alert("Data Berhasil Terkirim!");
+                } else {
+                    pos += 2;
+                    packet.style.left = pos + '%';
+                }
+            }, 20);
+        }
+
+        // LATIHAN / QUIZ
+        function checkAnswer(ans, type) {
+            if (ans === true) {
+                alert("Benar! Hebat!");
+                playSfx('correct');
+                updateProgress(state.progress + 15);
+            } else {
+                alert("Kurang tepat, coba lagi ya.");
+                playSfx('wrong');
+            }
+        }
+
+        // DRAG AND DROP
+        function allowDrop(ev) { ev.preventDefault(); }
+        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+        function drop(ev) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("text");
+            ev.target.appendChild(document.getElementById(data));
+            playSfx('success');
+            updateProgress(state.progress + 10);
+        }
+
+        // UTILITIES
+        function updateProgress(val) {
+            state.progress = Math.min(val, 100);
+            localStorage.setItem('eduProgress', state.progress);
+            document.getElementById('main-progress-bar').style.width = state.progress + '%';
+            document.getElementById('progress-text').innerText = state.progress + '%';
+        }
+
+        function toggleAudio() {
+            const bgm = document.getElementById('bgm');
+            if (state.isMuted) {
+                bgm.play().catch(e => console.log("Audio need interaction"));
+                document.getElementById('audio-icon').innerText = '🔊';
+            } else {
+                bgm.pause();
+                document.getElementById('audio-icon').innerText = '🔇';
+            }
+            state.isMuted = !state.isMuted;
+        }
+
+        function playSfx(type) {
+            // Placeholder untuk fungsi suara efek
+            console.log("SFX: " + type);
+        }
+
+        function speakText(text) {
+            const msg = new SpeechSynthesisUtterance();
+            msg.text = text;
+            msg.lang = 'id-ID';
+            window.speechSynthesis.speak(msg);
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+
+        // Initialize
+        window.onload = () => {
+            updateProgress(state.progress);
+        };
+    </script>
+</body>
+</html>
